@@ -1,7 +1,9 @@
 def compare_hands(first, second):
     # returns true if first is stronger than second, false otherwise
     f_repeats = [first.count(i) for i in first]
+    f_kind = max(f_repeats) + first.count(-1)
     s_repeats = [second.count(i) for i in second]
+    s_kind = max(s_repeats) + second.count(-1)
     if max(f_repeats) > max(s_repeats):
         return True
     if max(f_repeats) < max(s_repeats):
@@ -20,6 +22,21 @@ def compare_hands(first, second):
             return True
         elif s_full: 
             return False
+    elif max(f_repeats) == 2:
+        f_tp = False
+        s_tp = False
+        if f_repeats.count(2) == 4:
+            f_tp = True
+        if s_repeats.count(2) == 4:
+            s_tp = True
+
+        if (f_tp and s_tp) or (not f_tp and not s_tp):
+            pass
+        elif f_tp:
+            return True
+        elif s_tp: 
+            return False
+    
     for i in range(len(first)):
         if first[i] > second[i]:
             return True
@@ -54,7 +71,7 @@ for i in range(len(games)):
         elif card == "Q":
             hand_list.append(12)
         elif card == "J":
-            hand_list.append(11)
+            hand_list.append(-1)
         elif card == "T":
             hand_list.append(10)
         else:
@@ -66,11 +83,8 @@ for i in range(len(games)):
 sorted_games = insertion_sort_but_for_hands(games)
 # print(sorted_games)
 sum = 0
-hopeful_not_cursed = 0
 for i in range(len(sorted_games)):
     print(i, sorted_games[i][0], sorted_games[i][1], sorted_games[i][1] * (i + 1))
     sum += sorted_games[i][1] * (i + 1)
-    hopeful_not_cursed = hopeful_not_cursed + sorted_games[i][1] * (i + 1)
 
 print(sum)
-print(hopeful_not_cursed)
