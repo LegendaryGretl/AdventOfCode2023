@@ -1,14 +1,20 @@
 def compare_hands(first, second):
     # returns true if first is stronger than second, false otherwise
-    f_repeats = [first.count(i) for i in first]
-    f_kind = max(f_repeats) + first.count(-1)
-    s_repeats = [second.count(i) for i in second]
-    s_kind = max(s_repeats) + second.count(-1)
-    if max(f_repeats) > max(s_repeats):
+    f_repeats = [first.count(i) for i in first if i > 0]
+    try:
+        f_kind = max(f_repeats) + first.count(-1)
+    except:
+        f_kind = first.count(-1)
+    s_repeats = [second.count(i) for i in second if i > 0]
+    try:
+        s_kind = max(s_repeats) + second.count(-1)
+    except:
+        s_kind = second.count(-1)
+    if f_kind > s_kind:
         return True
-    if max(f_repeats) < max(s_repeats):
+    if f_kind < s_kind:
         return False
-    if max(f_repeats) == 3:
+    if f_kind == 3:
         f_full = False
         s_full = False
         if min(f_repeats) == 2:
@@ -22,7 +28,7 @@ def compare_hands(first, second):
             return True
         elif s_full: 
             return False
-    elif max(f_repeats) == 2:
+    elif f_kind == 2:
         f_tp = False
         s_tp = False
         if f_repeats.count(2) == 4:
