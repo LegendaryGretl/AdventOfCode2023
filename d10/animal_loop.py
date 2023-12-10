@@ -50,16 +50,18 @@ def count_crossings(start, direction, loop_path):
             loc[0] -= 1
             if (loc[0], loc[1]) in loop_path:
                 crossings += 1
-                # idx = loop_path.index((loc[0], loc[1]))
+                idx = loop_path.index((loc[0], loc[1]))
                 # try: 
                 #     if (loc[0] - 1, loc[1]) == loop_path[idx - 1]:
                 #         while (idx > 0) and ((loc[0] - 1, loc[1]) == loop_path[idx - 1]):
                 #             idx -=1 
                 #             loc[0] -= 1
+                #         crossings += 1
                 #     elif (loc[0] - 1, loc[1]) == loop_path[idx + 1]:
                 #         while (idx < len(loop_path) - 1) and ((loc[0] - 1, loc[1]) == loop_path[idx + 1]):
                 #             idx +=1 
                 #             loc[0] -= 1
+                #         crossings += 1
                 # except:
                 #     pass
     if direction == "S":
@@ -133,9 +135,14 @@ for r in range(len(pipe_map)):
     for c in range(len(pipe_map[r])):
         if pipe_map[r][c] != ".":
             continue
-        # jank = 0
-        # if count_crossings((r, c), "N", full_path) % 2 == 0:
-        #     jank += 1
+        cross = []
+        cross.append(count_crossings((r, c), "N", full_path))
+        cross.append(count_crossings((r, c), "E", full_path))
+        cross.append(count_crossings((r, c), "S", full_path))
+        cross.append(count_crossings((r, c), "W", full_path))
+        min_cross = min(cross)
+        if min_cross % 2 == 0:
+            continue
         # if count_crossings((r, c), "S", full_path) % 2 == 0:
         #     jank += 1    
         # if count_crossings((r, c), "E", full_path) % 2 == 0:
@@ -144,8 +151,8 @@ for r in range(len(pipe_map)):
         #     jank += 1
         # if jank < 3:
         #     enclosed += 1
-        if count_crossings_diag((r, c), full_path) %2 == 0:
-            continue
+        # if count_crossings_diag((r, c), full_path) %2 == 0:
+        #     continue
         enclosed += 1
 
 print(enclosed)
