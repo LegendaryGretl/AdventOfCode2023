@@ -16,21 +16,23 @@ def correct_arrangement(condition, grouping):
 def recurse_arrange(sequence, pattern, sum=0):
     if len(sequence) == 0:
         if len(pattern) == 0:
-            return sum + 1
+            return 1
         else:
-            return sum + 0
+            return 0
     if len(pattern) == 0:
         if sequence.find("#") != -1:
-            return sum + 0
+            return 0
         else:
-            return sum + 1
+            return 1
     if sequence[0] == ".":
-        return recurse_arrange(sequence[1:], pattern, sum)
+        return sum + recurse_arrange(sequence[1:], pattern, sum)
     if sequence[0] == "#":
         if len(sequence) < pattern[0]:
             return sum
         if sequence[:pattern[0]].find(".") == -1:
-            if (len(sequence) == pattern[0] )or (sequence[pattern[0]] != "#"):
+            if (len(sequence) > pattern[0]) and (sequence[pattern[0]] != "#"):
+                return recurse_arrange(sequence[pattern[0] + 1:], pattern[1:], sum)
+            elif len(sequence) == pattern[0]:
                 return recurse_arrange(sequence[pattern[0]:], pattern[1:], sum)
             else:
                 return sum
@@ -44,8 +46,24 @@ springs_txt = open("input.txt")
 springs_list = springs_txt.read().strip().split("\n")
 springs_list = [item.split() for item in springs_list]
 for i in range(len(springs_list)):
-    springs_list[i][1] = (int(springs_list[i][1].split(",")[0]), int(springs_list[i][1].split(",")[1]))
+    springs_list[i][1] = [int(item) for item in springs_list[i][1].split(",")]
 
-print(recurse_arrange("#.#.###", [1,1,3], 0))
+print(springs_list)
 
-print(recurse_arrange(".??..??...?##.", [1,1,3], 0))
+# print(recurse_arrange("#.#.###", [1,1,3], 0))
+
+# print(recurse_arrange(".??..??...?##.", [1,1,3], 0))
+
+# print(recurse_arrange("?#?#?#?#?#?#?#?", [1,3,1,6], 0))
+
+# print(recurse_arrange("????.#...#...", [4,1,1], 0))
+
+# print(recurse_arrange("????.######..#####.", [1,6,5], 0))
+
+# print(recurse_arrange("?###????????", [3, 2, 1], 0))
+
+tot_sum = 0
+for item in springs_list:
+    #print(item[0], item[1], recurse_arrange(item[0], item[1], 0))
+    tot_sum += recurse_arrange(item[0], item[1])
+print(tot_sum)
