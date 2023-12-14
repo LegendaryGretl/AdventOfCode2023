@@ -102,16 +102,15 @@ sum_h = 0
 sum_v = 0
 inc = 0
 for map in map_list:
-    h_p = -1
-    h_new = 0
-    v_p = -1
-    v_new = 0
+    h_p = []
+    v_p = []
     col = "".join(l for l in [item[0] for item in map])
     row = map[0]
     
     # print("horz: ")
     for h in range(1, len(col)):
         h_b = True
+        inc = 0
         for i in range(len(map[0])):
             try:
                 col = "".join(l for l in [item[i] for item in map])
@@ -119,59 +118,56 @@ for map in map_list:
                 print(map, i)
             if h <= math.floor(len(col) / 2):
                 # print(h, ":", col[h:2*h], (col[:h])[::-1])
-                if i == 0:
-                    h_p = find_smudge(col[h:2*h], (col[:h])[::-1])
-                    if h_p < 0:
+                if col[h:2*h] != (col[:h])[::-1]:
+                    if inc >= 1 or (find_smudge(col[h:2*h], (col[:h])[::-1]) == -1):
+                        h_b = False
                         break
-                elif h_p != find_smudge(col[h:2*h], (col[:h])[::-1]):
-                    h_p = -1
-                    break
+                    else:
+                        inc += 1
             else:
                 # print(h, ":", (col[h:])[::-1], col[h - len(col[h:]):h])
-                if i ==0:
-                    h_p = find_smudge((col[h:])[::-1], col[h - len(col[h:]):h])
-                    if h_p < 0:
+                if (col[h:])[::-1] != col[h - len(col[h:]):h]:
+                    if inc >= 1 or (find_smudge((col[h:])[::-1], col[h - len(col[h:]):h]) == -1):
+                        h_b = False
                         break
-                elif (col[h:])[::-1] != col[h - len(col[h:]):h]:
-                    h_p = -1
-                    break
-        if h_p != -1:
-            h_new = h
+                    else:
+                        inc += 1
+        if h_b and inc > 0:
+            h_p.append(h)
             break
 
     # print("vert:")
     for v in range(1, len(row)):
         v_b = True
+        inc = 0
         for i in range(len(map)):
             row = map[i]
             if v <= math.floor(len(row) / 2):
                 # print(v, ":", row[v:2*v], (row[:v])[::-1])
-                if i == 0:
-                    v_p = find_smudge(row[v:2*v], (row[:v])[::-1])
-                    if v_p < 0:
+                if row[v:2*v] != (row[:v])[::-1]:
+                    if inc >= 1 or (find_smudge(row[v:2*v], (row[:v])[::-1]) == -1):
+                        v_b = False
                         break
-                elif v_p != find_smudge(row[v:2*v], (row[:v])[::-1]):
-                    v_p = -1
-                    break
+                    else:
+                        inc += 1
             else:
                 # print(v, ":", (row[v:])[::-1], row[v - len(row[v:]):v])
-                if i == 0:
-                    v_p = find_smudge((row[v:])[::-1], row[v - len(row[v:]):v])
-                    if v_p < 0:
+                if (row[v:])[::-1] != row[v - len(row[v:]):v]:
+                    if inc >= 1 or (find_smudge((row[v:])[::-1], row[v - len(row[v:]):v]) == -1):
+                        v_b = False
                         break
-                elif v_p != find_smudge((row[v:])[::-1], row[v - len(row[v:]):v]):
-                    v_p = -1
-                    break
-        if v_p != -1:
-            v_new = v
+                    else:
+                        inc += 1
+        if v_b and inc > 0:
+            v_p.append(v)
             break
-    if h_p > 0:
-        sum_h += h_new
-    if v_p > 0:
-        sum_v += v_new
-    # if h_p + v_p == -2:
-    #     print(inc, ":", h_new, v_new)
-    #     print(map)
+    if len(h_p) > 0:
+        sum_h += max(h_p)
+    if len(v_p) > 0:
+        sum_v += max(v_p)
+    if len(h_p) + len(v_p) == 0:
+        print(inc, ":", h_p, v_p)
+        print(map)
     inc += 1
 
 print(sum_v + 100*sum_h)
