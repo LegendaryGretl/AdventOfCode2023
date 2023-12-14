@@ -6,6 +6,7 @@ map_list = [m.split("\n") for m in map_list]
 
 sum_h = 0
 sum_v = 0
+inc = 0
 for map in map_list:
     h_p = []
     v_p = []
@@ -20,7 +21,7 @@ for map in map_list:
                 col = "".join(l for l in [item[i] for item in map])
             except:
                 print(map, i)
-            if h < math.floor(len(col) / 2):
+            if h <= math.floor(len(col) / 2):
                 # print(h, ":", col[h:2*h], (col[:h])[::-1])
                 if col[h:2*h] != (col[:h])[::-1]:
                     h_b = False
@@ -39,7 +40,7 @@ for map in map_list:
         v_b = True
         for i in range(len(map)):
             row = map[i]
-            if v < math.floor(len(row) / 2):
+            if v <= math.floor(len(row) / 2):
                 # print(v, ":", row[v:2*v], (row[:v])[::-1])
                 if row[v:2*v] != (row[:v])[::-1]:
                     v_b = False
@@ -56,5 +57,9 @@ for map in map_list:
         sum_h += max(h_p)
     if len(v_p) > 0:
         sum_v += max(v_p)
+    if len(h_p) + len(v_p) == 0:
+        print(inc, ":", h_p, v_p)
+        print(map)
+    inc += 1
 
 print(sum_v + 100*sum_h)
