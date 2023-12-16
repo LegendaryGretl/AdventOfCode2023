@@ -1,7 +1,9 @@
-sp_vert = {"self":"|","N":["N"], "E":["N", "S"], "S":["S"], "W":["N", "S"]}
-sp_horz = {"self":"-","N":["E", "W"], "E":["E"], "S":["E", "W"], "W":["W"]}
-m_fw = {"self":"/","N":["E"], "E":["N"], "S":["W"], "W":["S"]}
-m_bw = {"self":"\\","N":["W"], "E":["S"], "S":["E"], "W":["N"]}
+import copy
+
+sp_vert = {"self":"|","N":("N"), "E":("N", "S"), "S":("S"), "W":("N", "S")}
+sp_horz = {"self":"-","N":("E", "W"), "E":("E"), "S":("E", "W"), "W":("W")}
+m_fw = {"self":"/","N":("E"), "E":("N"), "S":("W"), "W":("S")}
+m_bw = {"self":"\\","N":("W"), "E":("S"), "S":("E"), "W":("N")}
 
 mirrors = [sp_vert, sp_horz, m_fw, m_bw]
 
@@ -29,7 +31,10 @@ def beam_path_step(start, dir, map, energy):
         if map[next[0]][next[1]] != ".":
             for m in mirrors:
                 if map[next[0]][next[1]] == m["self"]:
-                    directions = m[dir]
+                    # if map[next[0]][next[1]] == "\\":
+                    #     print(dir, m[dir])
+                    directions = [item for item in m[dir]]
+                    break
         else:
             directions.append(dir)
     return next, directions
@@ -53,7 +58,7 @@ beam_heads = [(0, 0)]
 beam_dirs = ["E"]
 for m in mirrors:
     if mir_map[0][0] == m["self"]:
-        beam_dirs = m[beam_dirs[0]]
+        beam_dirs = [item for item in m[beam_dirs[0]]]
 energy_map[0][0] = "#"
 passed_by = []
 while len(beam_heads) > 0:
@@ -62,7 +67,7 @@ while len(beam_heads) > 0:
         next_tile, next_dirs = beam_path_step(beam_heads[i], beam_dirs[i], mir_map, energy_map)
         if (beam_heads[i], beam_dirs[i]) in passed_by:
             to_delete.append(i)
-            print(passed_by.index((beam_heads[i], beam_dirs[i])))
+            # print(passed_by.index((beam_heads[i], beam_dirs[i])))
         elif len(next_dirs) > 0:
             # elif next_tile != beam_heads[i]:
             passed_by.append((beam_heads[i], beam_dirs[i]))
@@ -79,5 +84,8 @@ while len(beam_heads) > 0:
 
 print(calc_energy(energy_map))
 # print(energy_map)
-for item in energy_map:
-    print("".join(item))               
+# i = 0
+# for item in energy_map:
+#     print("".join(item))          
+#     print("".join(mir_map[i]))
+#     i+=1     
