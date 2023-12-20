@@ -128,7 +128,7 @@ def find_relection_direction(start, mir_map, dir):
             return beam_dirs
     return dir
     
-mir_map_txt = open("easy_input.txt")
+mir_map_txt = open("input.txt")
 mir_map = mir_map_txt.read().strip().split("\n")
 energy_map = []
 for i in range(len(mir_map)):
@@ -178,31 +178,68 @@ for i in range(len(mir_map)):
 
 passed_by = []
 # print(energy_from_path_start(0, 0, "E"))
-beam_heads = []
-beam_dirs = []
-beam_heads += [(i, 0) for i in range(len(mir_map))]
-beam_dirs += ["E" for i in range(len(mir_map))]
+beam_starts = []
+beam_st_dirs = []
+beam_starts += [(i, 0) for i in range(len(mir_map))]
+beam_st_dirs += ["E" for i in range(len(mir_map))]
 
-beam_heads += [(len(mir_map[0]) - 1, i) for i in range(len(mir_map[0]))]
-beam_dirs += ["N" for i in range(len(mir_map))]
+beam_starts += [(len(mir_map[0]) - 1, i) for i in range(len(mir_map[0]))]
+beam_st_dirs += ["N" for i in range(len(mir_map))]
 
-beam_heads += [(i, len(mir_map) - 1) for i in range(len(mir_map))]
-beam_dirs += ["W" for i in range(len(mir_map))]
+beam_starts += [(i, len(mir_map) - 1) for i in range(len(mir_map))]
+beam_st_dirs += ["W" for i in range(len(mir_map))]
 
-beam_heads += [(0, i) for i in range(len(mir_map[0]))]
-beam_dirs += ["S" for i in range(len(mir_map))]
+beam_starts += [(0, i) for i in range(len(mir_map[0]))]
+beam_st_dirs += ["S" for i in range(len(mir_map))]
 
 # print(energy_from_path_start(0, 3, "S", False, False, True))
 # for item in energy_map:
 #     print("".join(item))
 
+# max_eng = -1
+# max_start = (-1, -1)
+# for i in range(len(beam_heads)):
+#     passed_by = []
+#     eng = energy_from_path_start(beam_heads[i][0], beam_heads[i][1], beam_dirs[i], False, False, True)
+#     if eng > max_eng:
+#         max_eng = eng
+#         max_start = (beam_heads[i][0], beam_heads[i][1])
+
+# print(max_eng, max_start)
+
 max_eng = -1
 max_start = (-1, -1)
-for i in range(len(beam_heads)):
+for k in range(len(beam_starts)):
+    beam_dirs = [find_relection_direction(beam_starts[k], mir_map, beam_st_dirs[k])]
+    beam_heads = [beam_starts[k] for item in beam_dirs]
+    # energy_map = [["." for item in row] for row in energy_map]
+    # energy_map[beam_starts[k][0]][beam_starts[k][1]] = "#"
     passed_by = []
-    eng = energy_from_path_start(beam_heads[i][0], beam_heads[i][1], beam_dirs[i], False, False, True)
+    while len(beam_heads) > 0:
+        to_delete = []
+        for i in range(len(beam_heads)):
+            next_tile, next_dirs = beam_path_step(beam_heads[i], beam_dirs[i], mir_map, energy_map)
+            if (beam_heads[i], beam_dirs[i]) in passed_by:
+                to_delete.append(i)
+                # print(passed_by.index((beam_heads[i], beam_dirs[i])))
+            elif len(next_dirs) > 0:
+                # elif next_tile != beam_heads[i]:
+                passed_by.append((beam_heads[i], beam_dirs[i]))
+                beam_heads[i] = next_tile
+                beam_dirs[i] = next_dirs[0]
+                if len(next_dirs) > 1:
+                    beam_heads.append(next_tile)
+                    beam_dirs.append(next_dirs[1])
+            else:
+                to_delete.append(i)
+        for idx in reversed(to_delete):
+            del beam_heads[idx]
+            del beam_dirs[idx]
+    
+    eng = len(set([item[0] for item in passed_by]))
+        
     if eng > max_eng:
         max_eng = eng
-        max_start = (beam_heads[i][0], beam_heads[i][1])
+        max_start = (beam_starts[k][0], beam_starts[k][1])
 
-print(max_eng, max_start)
+print(max_eng)
